@@ -68,7 +68,7 @@ jobs:
         cd openwrt
         git apply --check $GITHUB_WORKSPACE/patch.diff
         if [ $? -eq 0 ]; then
-          git apply --check $GITHUB_WORKSPACE/patch.diff
+          git apply $GITHUB_WORKSPACE/patch.diff
         fi
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
