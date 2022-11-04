@@ -1,4 +1,4 @@
-From e8cfcea5f6ee953ab81341557a45853378253ec4 Mon Sep 17 00:00:00 2001
+From ed62cc6d84ad96402eb2017c7e3f1b53618323b0 Mon Sep 17 00:00:00 2001
 From: Chen Minqiang <ptpt52@gmail.com>
 Date: Tue, 13 Sep 2022 13:46:20 +0800
 Subject: [PATCH] mediatek: easy install for Xiaomi Redmi Router AX6000
@@ -106,7 +106,7 @@ index 7c590d22e2..55f183de59 100644
  
  			/* last 12 MiB is reserved for NMBM bad block table */
 diff --git a/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh b/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
-index a9327ae282..31e1d64317 100755
+index 7d6c351993..ade7b94a86 100755
 --- a/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
 @@ -1,5 +1,129 @@
@@ -250,41 +250,73 @@ index a9327ae282..31e1d64317 100755
  		nand_do_upgrade "$1"
  		;;
 diff --git a/target/linux/mediatek/image/filogic.mk b/target/linux/mediatek/image/filogic.mk
-index f7fc9e30d1..b3cffd67ba 100644
+index f7fc9e30d1..0ad57e2ac4 100644
 --- a/target/linux/mediatek/image/filogic.mk
 +++ b/target/linux/mediatek/image/filogic.mk
-@@ -38,6 +38,20 @@ define Build/mt7986-gpt
+@@ -38,6 +38,19 @@ define Build/mt7986-gpt
  	rm $@.tmp
  endef
  
 +define Build/gen-ubi-initramfs
++	cp $@ $@.tmp
 +	sh $(TOPDIR)/scripts/ubinize-image.sh \
 +		$(if $(UBOOTENV_IN_UBI),--uboot-env) \
-+		--kernel $(KDIR)/tmp/$(KERNEL_INITRAMFS_IMAGE) \
++		--kernel $@.tmp \
 +		$(foreach part,$(UBINIZE_PARTS),--part $(part)) \
-+		"$(1).tmp" \
++		"$@" \
 +		-p $(BLOCKSIZE:%k=%KiB) -m $(PAGESIZE) \
 +		$(if $(SUBPAGESIZE),-s $(SUBPAGESIZE)) \
 +		$(if $(VID_HDR_OFFSET),-O $(VID_HDR_OFFSET)) \
-+		$(UBINIZE_OPTS) && \
-+	cat "$(1).tmp" > "$(1)" && rm "$(1).tmp" && \
-+	$(CP) "$(1)" $(BIN_DIR)/
++		$(UBINIZE_OPTS)
 +endef
 +
  define Device/bananapi_bpi-r3
    DEVICE_VENDOR := Bananapi
    DEVICE_MODEL := BPi-R3
-@@ -135,7 +149,9 @@ define Device/xiaomi_redmi-router-ax6000
+@@ -135,7 +148,10 @@ define Device/xiaomi_redmi-router-ax6000
    UBINIZE_OPTS := -E 5
    BLOCKSIZE := 128k
    PAGESIZE := 2048
 -  KERNEL_IN_UBI := 1
-+  KERNEL_INITRAMFS := kernel-bin | lzma | \
++  IMAGES += initramfs-factory.ubi
++  IMAGE/initramfs-factory.ubi := kernel-bin | lzma | \
 +	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | \
-+	gen-ubi-initramfs $(KDIR)/tmp/$$(KERNEL_INITRAMFS_PREFIX)-factory.ubi
++	gen-ubi-initramfs
    IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
  endef
  TARGET_DEVICES += xiaomi_redmi-router-ax6000
+-- 
+2.38.1.windows.1
+
+From b5bddc507a951845fe229d9ac3001d24fada247b Mon Sep 17 00:00:00 2001
+From: Chen Minqiang <ptpt52@gmail.com>
+Date: Sun, 30 Oct 2022 06:58:48 +0800
+Subject: [PATCH] mediatek: Xiaomi Redmi Router AX6000: config migration
+
+---
+ .../base-files/uci-defaults/04_config_migration     | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 target/linux/mediatek/filogic/base-files/uci-defaults/04_config_migration
+
+diff --git a/target/linux/mediatek/filogic/base-files/uci-defaults/04_config_migration b/target/linux/mediatek/filogic/base-files/uci-defaults/04_config_migration
+new file mode 100644
+index 0000000000..d06407ceb7
+--- /dev/null
++++ b/target/linux/mediatek/filogic/base-files/uci-defaults/04_config_migration
+@@ -0,0 +1,13 @@
++#
++# Copyright (C) 2022 X-WRT.COM
++#
++
++. /lib/functions.sh
++
++board=$(board_name)
++
++case "$board" in
++xiaomi,redmi-router-ax6000)
++	sed -i "s/list ports 'lan1'/list ports 'lan4'/g;s/option device 'lan1'/option device 'lan4'/g" /etc/config/network
++	;;
++esac
 -- 
 2.38.1.windows.1
 
