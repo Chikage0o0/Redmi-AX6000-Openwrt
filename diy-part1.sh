@@ -29,6 +29,7 @@ sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
 ./scripts/feeds install -f -p mosdns mosdns luci-app-mosdns
 find ./ -name v2ray-geodata | xargs rm -rf
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
-git clone https://github.com/flytosky-f/luci-app-vlmcsd.git package/luci-app-vlmcsd
+git clone https://github.com/ssuperh/luci-app-vlmcsd-new.git package/luci-app-vlmcsd-new
+mv package/luci-app-vlmcsd-new/luci-app-vlmcsd package/luci-app-vlmcsd && rm -rf package/luci-app-vlmcsd-new
 git clone https://github.com/flytosky-f/openwrt-vlmcsd.git package/openwrt-vlmcsd
 ./scripts/feeds update -i && ./scripts/feeds install -a
