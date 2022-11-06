@@ -2,6 +2,9 @@
 
 #edit feeds
 sed -i 's/downloads.openwrt.org/mirrors.ustc.edu.cn\/openwrt/g' /etc/opkg/distfeeds.conf
+sed -i "/openwrt_kenzo/d" /etc/opkg/distfeeds.conf
+sed -i "/openwrt_mosdns/d" /etc/opkg/distfeeds.conf
+sed -i "/openwrt_small/d" /etc/opkg/distfeeds.conf
 echo "mt7915e wed_enable=Y" >> /etc/modules.d/mt7915e
 
 [ "$(uci -q get system.@system[0].init)" != "" ] &&  exit 0
