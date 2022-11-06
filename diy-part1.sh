@@ -31,4 +31,5 @@ find ./ -name v2ray-geodata | xargs rm -rf
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 svn export https://github.com/immortalwrt/luci/branches/openwrt-21.02/applications/luci-app-vlmcsd package/luci-app-vlmcsd
 svn export https://github.com/immortalwrt/packages/branches/openwrt-21.02/net/vlmcsd  package/vlmcsd
+sed -i 's#../../luci.mk#$(TOPDIR)/feeds/luci/luci.mk#g' ./package/*/Makefile
 ./scripts/feeds update -i && ./scripts/feeds install -a
