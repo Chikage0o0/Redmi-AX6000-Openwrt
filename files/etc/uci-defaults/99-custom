@@ -39,4 +39,7 @@ uci set firewall.@defaults[0].flow_offloading='1'
 uci set firewall.@defaults[0].flow_offloading_hw='1'
 uci commit firewall
 
+#set passwall use nft
+uci set passwall.@global_forwarding[0].use_nft='1'
+
 echo "/www/luci-static/argon/background/" >> /etc/sysupgrade.conf
