@@ -32,6 +32,7 @@ uci set wireless.@wifi-device[0].country='CN'
 uci set wireless.@wifi-device[0].channel='auto'
 uci set wireless.@wifi-device[1].country='CN'
 uci set wireless.@wifi-device[1].channel='auto'
+uci set wireless.@wifi-device[1].htmode='HE160'
 uci commit wireless
 
 #enable flow offloading
@@ -41,5 +42,6 @@ uci commit firewall
 
 #set passwall use nft
 uci set passwall.@global_forwarding[0].use_nft='1'
+uci commit passwall
 
 echo "/www/luci-static/argon/background/" >> /etc/sysupgrade.conf
