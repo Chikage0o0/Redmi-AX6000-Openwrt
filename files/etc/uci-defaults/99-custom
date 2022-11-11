@@ -58,6 +58,16 @@ uci commit firewall
 
 #set passwall use nft
 uci set passwall.@global_forwarding[0].use_nft='1'
+uci set passwall.@global[0].dns_mode='udp'
+uci set passwall.@global[0].remote_dns='127.0.0.1:5335'
+uci set passwall.@global[0].tcp_proxy_mode='gfwlist'
+uci set passwall.@global[0].udp_proxy_mode='disable'
 uci commit passwall
+
+#set mosdns
+uci set mosdns.config.enable_pipeline='1'
+uci set mosdns.config.adblock='1'
+uci set mosdns.config.ad_source='geosite.dat'
+uci commit mosdns
 
 echo "/www/luci-static/argon/background/" >> /etc/sysupgrade.conf
